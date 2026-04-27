@@ -55,17 +55,7 @@ class Cache(object):
             >>> raise lifter.exceptions.NotInCache
 
         """
-        if not self.enabled:
-            if reraise:
-                raise exceptions.DisabledCache()
-            return default
-
-        try:
-            return self._get(key)
-        except exceptions.NotInCache:
-            if reraise:
-                raise
-            return default
+        pass
 
     def set(self, key, value, timeout=NotSet):
         """
@@ -86,21 +76,10 @@ class Cache(object):
             # this cached value will expire after half an hour
             cache.set('my_key', 'value', 1800)
         """
-        if not self.enabled:
-            return
-
-        if hasattr(value, '__call__'):
-            value = value()
-        if timeout == NotSet:
-            timeout = self.default_timeout
-        self._set(key, value, timeout)
-        return value
+        pass
 
     def get_or_set(self, key, value):
-        try:
-            return self.get(key, reraise=True)
-        except exceptions.NotInCache:
-            return self.set(key, value)
+        pass
 
     def enable(self):
         """
@@ -111,7 +90,7 @@ class Cache(object):
             with cache.enable():
                 manager.count()
         """
-        return Enable(self, True)
+        pass
 
     def disable(self):
         """
@@ -123,11 +102,11 @@ class Cache(object):
                 # Will ignore the cache
                 manager.count()
         """
-        return Enable(self, False)
+        pass
 
 
     def get_now(self):
-        return datetime.datetime.now()
+        pass
 
     def _get(self, key):
         raise NotImplementedError()
@@ -143,23 +122,7 @@ class DummyCache(Cache):
         super(DummyCache, self).__init__(*args, **kwargs)
 
     def _set(self, key, value, timeout=None):
-        if timeout is not None:
-            expires_on = self.get_now() + datetime.timedelta(seconds=timeout)
-        else:
-            expires_on = None
-        self._data[key] = (expires_on, value)
+        pass
 
     def _get(self, key):
-        try:
-            expires_on, value = self._data[key]
-        except KeyError:
-            raise exceptions.NotInCache(key)
-
-        if expires_on is None:
-            return value
-
-        if expires_on < self.get_now():
-            del self._data[key]
-            raise exceptions.NotInCache(key)
-
-        return value
+        pass

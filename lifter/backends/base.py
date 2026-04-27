@@ -21,14 +21,7 @@ def setup_fields(attrs):
     """
     Collect all fields declared on the class and remove them from attrs
     """
-    fields = {}
-    iterator = list(attrs.items())
-    for key, value in iterator:
-        if not isinstance(value, Field):
-            continue
-        fields[key] = value
-        del attrs[key]
-    return fields
+    pass
 
 
 META_ALLOWED_FIELDS = [
@@ -62,7 +55,7 @@ class BaseModel(six.with_metaclass(BaseModelMeta, object)):
 
     @classmethod
     def load(cls, store, **kwargs):
-        return store.query(cls, **kwargs)
+        pass
 
     def __init__(self, **kwargs):
         for field_name, value in kwargs.items():

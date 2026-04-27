@@ -5,4 +5,4 @@ class LifterConfig(AppConfig):
     name = 'lifter'
 
     def ready(self):
-        monkey_patch.setup()
+        pass

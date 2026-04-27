@@ -7,7 +7,7 @@ class Aggregate(object):
 
     @property
     def identifier(self):
-        return '{0}__{1}'.format(self.attr_name, self.name)
+        pass
 
     def aggregate(self, values):
         raise NotImplementedError
@@ -19,23 +19,23 @@ class Sum(Aggregate):
     name = 'sum'
 
     def aggregate(self, values):
-        return sum(values)
+        pass
 
 
 class Min(Aggregate):
     name = 'min'
 
     def aggregate(self, values):
-        return min(values)
+        pass
 
 class Max(Aggregate):
     name = 'max'
 
     def aggregate(self, values):
-        return max(values)
+        pass
 
 class Avg(Aggregate):
     name = 'avg'
 
     def aggregate(self, values):
-        return float(sum(values)) / len(values)
+        pass

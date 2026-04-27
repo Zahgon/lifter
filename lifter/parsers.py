@@ -9,7 +9,7 @@ class Parser(object):
 
 class JSONParser(Parser):
     def parse(self, content):
-        return json.loads(content)
+        pass
 
 
 class XMLParser(Parser):
@@ -24,7 +24,4 @@ class XMLParser(Parser):
         super(XMLParser, self).__init__(*args, **kwargs)
 
     def parse(self, content):
-        parsed = ET.fromstring(content)
-        results = parsed.findall(self.results, self.ns)
-
-        return results
+        pass

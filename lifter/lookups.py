@@ -3,8 +3,7 @@ import operator
 
 class Lookups(persisting_theory.Registry):
     def prepare_name(self, data, name):
-        data.registry_name = name
-        return name
+        pass
 
 registry = Lookups()
 register = registry.register
@@ -32,86 +31,85 @@ class OneValueLookup(BaseLookup):
 class eq(OneValueLookup):
     operator = '=='
     def lookup(self, value):
-        return value == self.reference_value
+        pass
 
 @register(name='ne')
 class ne(OneValueLookup):
     operator = '!='
     def lookup(self, value):
-        return value != self.reference_value
+        pass
 
 @register(name='gt')
 class gt(OneValueLookup):
     operator = '>'
     def lookup(self, value):
-        return value > self.reference_value
+        pass
 
 @register(name='gte')
 class gte(OneValueLookup):
     operator = '>='
     """Greater than or equal"""
     def lookup(self, value):
-        return value >= self.reference_value
+        pass
 
 @register(name='lt')
 class lt(OneValueLookup):
     operator = '<'
     def lookup(self, value):
-        return value < self.reference_value
+        pass
 
 @register(name='lte')
 class lte(OneValueLookup):
     operator = '<='
     def lookup(self, value):
-        return value <= self.reference_value
+        pass
 
 @register(name='startswith')
 class startswith(OneValueLookup):
     operator = 'startswith'
     def lookup(self, value):
-        return value.startswith(self.reference_value)
+        pass
 
 @register(name='istartswith')
 class istartswith(OneValueLookup):
     operator = 'istartswith'
     def lookup(self, value):
-        return value.lower().startswith(self.reference_value.lower())
+        pass
 
 @register(name='endswith')
 class endswith(OneValueLookup):
     operator = 'endswith'
     def lookup(self, value):
-        return value.endswith(self.reference_value)
+        pass
 
 @register(name='iendswith')
 class iendswith(OneValueLookup):
     operator = 'iendswith'
     def lookup(self, value):
-        return value.lower().endswith(self.reference_value.lower())
+        pass
 
 @register(name='contains')
 class contains(OneValueLookup):
     operator = 'contains'
     def lookup(self, value):
-        return self.reference_value in value
+        pass
 
 @register(name='icontains')
 class icontains(OneValueLookup):
     operator = 'icontains'
     def lookup(self, value):
-        return self.reference_value.lower() in value.lower()
+        pass
 
 @register(name='value_in')
 class value_in(OneValueLookup):
     operator = 'in'
     def lookup(self, value):
-        return value in self.reference_value
+        pass
 
 @register(name='exists')
 class exists(BaseLookup):
     def lookup(self, value):
-        from .query import Path
-        return value != Path.DoesNotExist
+        pass
 
     def __hash__(self):
         return hash('exists')
@@ -122,14 +120,14 @@ class value_range(OneValueLookup):
 
     @property
     def start(self):
-        return self.reference_value[0]
+        pass
 
     @property
     def end(self):
-        return self.reference_value[1]
+        pass
 
     def lookup(self, value):
-        return value >= self.start and value <= self.end
+        pass
 
 @register(name='test')
 class test(BaseLookup):
@@ -139,4 +137,4 @@ class test(BaseLookup):
         self.kwargs = kwargs
 
     def lookup(self, value):
-        return self.test(value, *self.args, **self.kwargs)
+        pass

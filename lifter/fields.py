@@ -9,21 +9,21 @@ class Field(object):
 class IntegerField(Field):
 
     def to_python(self, adapter, v):
-        return int(v)
+        pass
 
 class DateField(Field):
 
     def to_python(self, adapter, v, date_format="%Y-%m-%d"):
-        return datetime.datetime.strptime(v, date_format).date()
+        pass
 
 class DateTimeField(Field):
 
     def to_python(self, adapter, v, date_format="%Y-%m-%d"):
-        return datetime.datetime.strptime(v, date_format)
+        pass
 
 class CharField(Field):
     def to_python(self, adapter, v):
-        return v
+        pass
 
 
 class ForeignKey(Field):
@@ -32,4 +32,4 @@ class ForeignKey(Field):
         super(ForeignKey, self).__init__(**kwargs)
 
     def to_python(self, adapter, v):
-        return self.adapter.store.adapters[self.model].clean(v)
+        pass

@@ -15,16 +15,16 @@ class Manager(object):
             self.adapter = self.store.get_default_adapter(model=self.model)
 
     def get_store(self):
-        return self.store
+        pass
 
     def get_queryset(self):
-        return self.queryset_class(manager=self, model=self.model)
+        pass
 
     def all(self):
-        return self.get_queryset().all()
+        pass
 
     def execute(self, query):
-        return self.store._execute(query, model=self.model, adapter=self.adapter)
+        pass
 
     def __getattr__(self, attr):
         # Try to proxy on queryset if possible

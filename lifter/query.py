@@ -55,10 +55,10 @@ class Path(object):
         return Ordering(self, reverse=True)
 
     def test(self, func, *args, **kwargs):
-        return QueryNode(path=self, lookup=lookups.registry['test'](func, *args, **kwargs))
+        pass
 
     def exists(self):
-        return QueryNode(path=self, lookup=lookups.registry['exists'](), path_kwargs={'soft_fail': True})
+        pass
 
     def __hash__(self):
         return hash(tuple(self.path))
@@ -89,7 +89,7 @@ class Aggregation(object):
         return 'Aggregation({})'.format(self.func)
 
     def aggregate(self, data):
-        return self.func(data)
+        pass
 
 
 class BaseQueryNode(object):
@@ -129,12 +129,7 @@ class QueryNodeWrapper(BaseQueryNode):
         return self.clone(subqueries=list(self.subqueries) + [other])
 
     def clone(self, **kwargs):
-        kwargs.setdefault('inverted', self.inverted)
-        new_query = self.__class__(
-            kwargs.get('operator', self.operator),
-            *kwargs.get('subqueries', self.subqueries),
-            **kwargs)
-        return new_query
+        pass
 
     def __hash__(self):
         return hash((self.inverted, self.operator, tuple(self.subqueries)))
@@ -151,11 +146,7 @@ class QueryNode(BaseQueryNode):
         return '<QueryNode {0} {1}>'.format(self.path, self.lookup)
 
     def clone(self, **kwargs):
-        kwargs.setdefault('path', self.path)
-        kwargs.setdefault('lookup', self.lookup)
-        kwargs.setdefault('inverted', self.inverted)
-        kwargs.setdefault('path_kwargs', self.path_kwargs)
-        return self.__class__(**kwargs)
+        pass
 
     def __hash__(self):
         return hash((
@@ -165,10 +156,7 @@ class QueryNode(BaseQueryNode):
             self.inverted,
         ))
 def lookup_to_path(lookup):
-    path = Path()
-    for part in lookup.replace('__', '.').split('.'):
-        path = getattr(path, part)
-    return path
+    pass
 
 
 class Window(object):
@@ -184,18 +172,15 @@ class Window(object):
             raise ValueError('Accessing a single element from a queryset is not supported')
 
     def as_slice(self):
-        return slice(self.start, self.stop)
+        pass
 
     @property
     def start_as_int(self):
-        try:
-            return int(self.start)
-        except TypeError:
-            return 0
+        pass
 
     @property
     def size(self):
-        return self.stop - self.start_as_int
+        pass
 
     def __hash__(self):
         return hash((self.start, self.stop))
@@ -222,16 +207,7 @@ class Query(object):
         self.hints = hints
 
     def clone(self, **kwargs):
-        base_kwargs = {
-            'orderings': self.orderings,
-            'action': self.action,
-        }
-        if self.filters:
-            base_kwargs['filters'] = self.filters.clone()
-        base_kwargs.update(**self.hints)
-        base_kwargs.update(**kwargs)
-
-        return self.__class__(**base_kwargs)
+        pass
 
     def __hash__(self):
         return hash((
@@ -264,28 +240,20 @@ class QuerySet(object):
 
     @property
     def data(self):
-        if self._populated:
-            return self._data
-        return self._fetch_all()
+        pass
 
     def _fetch_all(self):
-        iterator = self.iterator()
-        self._data = [item for item in iterator]
-        self._populated = True
-        return self._data
+        pass
 
     def iterator(self):
-        return self.manager.execute(self.query)
+        pass
 
     def hints(self, **kwargs):
         """
         Use this method to update hints value of the underlying query
         example: queryset.hints(permissive=False)
         """
-        new_query = self.query.clone()
-        new_query.hints.update(kwargs)
-
-        return self._clone(query=new_query)
+        pass
 
     def __eq__(self, other):
         return self.data == other
@@ -302,221 +270,69 @@ class QuerySet(object):
         return self._clone(query=query)
 
     def _clone(self, query=None, orderings=None, **kwargs):
-        orderings = orderings or self.orderings
-        distinct = kwargs.get('distinct', self.distinct_results)
-        return self.__class__(self.manager, model=self.model, query=query)
+        pass
 
     def all(self):
-        return self._clone()
+        pass
 
     def first(self):
-        try:
-            return self.data[0]
-        except IndexError:
-            return None
+        pass
 
     def last(self):
-        try:
-            return self.data[-1]
-        except IndexError:
-            return None
+        pass
 
     def build_filter(self, *args, **kwargs):
-        if not args and not kwargs:
-            raise ValueError('You need to provide at least a query or some keyword arguments')
-
-        final_arg_query = None
-        for arg in args:
-            if not final_arg_query:
-                final_arg_query = arg
-                continue
-            final_arg_query = final_arg_query & arg
-
-        kwargs_query = self.build_filter_from_kwargs(**kwargs)
-        if kwargs_query and final_arg_query:
-            final_query = final_arg_query & kwargs_query
-        elif kwargs_query:
-            final_query = kwargs_query
-        else:
-            final_query = final_arg_query
-
-        return final_query
+        pass
 
     def build_filter_from_kwargs(self, **kwargs):
         """Convert django-s like lookup to SQLAlchemy ones"""
-        query = None
-        for path_to_convert, value in kwargs.items():
-
-            path_parts = path_to_convert.split('__')
-            lookup_class = None
-            try:
-                # We check if the path ends with something such as __gte, __lte...
-                lookup_class = lookups.registry[path_parts[-1]]
-                path_to_convert = '__'.join(path_parts[:-1])
-            except KeyError:
-                pass
-            path = lookup_to_path(path_to_convert)
-
-            if lookup_class:
-                q = QueryNode(path, lookup=lookup_class(value))
-            else:
-                q = path == value
-
-            if query:
-                query = query & q
-            else:
-                query = q
-        return query
+        pass
 
     def _combine_query_filters(self, query):
-        if self.query.filters:
-            return query & self.query.filters
-        return query
+        pass
 
     def filter(self, *args, **kwargs):
-        final_filter = self.build_filter(*args, **kwargs)
-        query = self.query.clone(action='select', filters=self._combine_query_filters(final_filter))
-        return self._clone(query=query)
+        pass
 
     def exclude(self, *args, **kwargs):
-        final_filter = ~self.build_filter(*args, **kwargs)
-        query = self.query.clone(action='select', filters=self._combine_query_filters(final_filter))
-        return self._clone(query=query)
+        pass
 
     def count(self):
-        new_query = self.query.clone(action='count')
-        return self.manager.execute(new_query)
+        pass
 
     def _parse_ordering(self, *paths):
-        orderings = []
-
-        for path in paths:
-            if isinstance(path, Ordering):
-                # probably explicit reverted ordering using ~Model.attribute
-                orderings.append(path)
-                continue
-
-            reverse = False
-            if isinstance(path, str):
-                if path == '?':
-                    orderings.append(Ordering(None, random=True))
-                    continue
-                reverse = path.startswith('-')
-                if reverse:
-                    path = path[1:]
-                path = self.arg_to_path(path)
-            orderings.append(Ordering(path, reverse))
-
-        return orderings
+        pass
 
     def get(self, *args, **kwargs):
-        qs = self.filter(*args, **kwargs)
-        new_query = qs.query.clone(action='select', force_single=True)
-        return qs.manager.execute(new_query)
+        pass
 
     def order_by(self, *orderings):
-        parsed_orderings = self._parse_ordering(*orderings)
-        new_query = self.query.clone(orderings=parsed_orderings)
-        return self._clone(query=new_query)
+        pass
 
     def arg_to_path(self, arg):
-        path = arg
-        if isinstance(arg, str):
-            path = lookup_to_path(arg)
-        return path
+        pass
 
     def values(self, *args):
-        if not args:
-            raise ValueError('Empty values')
-
-        paths = [self.arg_to_path(arg) for arg in args]
-        query = self.query.clone(action='values', paths=paths, mode='mapping')
-        return self.manager.execute(query)
+        pass
 
     def values_list(self, *args, **kwargs):
-        if not args:
-            raise ValueError('Empty values')
-
-        paths = [self.arg_to_path(arg) for arg in args]
-
-        if kwargs.get('flat', False) and len(paths) > 1:
-            raise ValueError('You cannot set flat to True if you want to return multiple values')
-
-        query = self.query.clone(action='values', paths=paths, mode='iterable', flat=kwargs.get('flat'))
-        return self.manager.execute(query)
+        pass
 
     def _get_aggregate_key(self, aggregation, function_name, key=None):
-        if key:
-            final_key = key
-        else:
-            func_name = function_name or aggregation.func.__name__ if aggregation.func.__name__ != '<lambda>' else key
-            final_key = '{0}__{1}'.format(str(aggregation.path), func_name)
-        return final_key
+        pass
 
     def aggregate(self, *args, **kwargs):
-        data = {}  # Isn't lazy
-        flat = kwargs.pop('flat', False)
-
-        aggregates = []
-        for conf in args:
-            function_name = None
-            try:
-                # path / function tuple aggregate
-                path, func = conf
-            except TypeError:
-                # Django-like aggregate
-                path = lookup_to_path(conf.attr_name)
-                func = conf.aggregate
-                function_name = conf.name
-
-            aggregation = Aggregation(path, func)
-            aggregates.append(
-                (
-                    self._get_aggregate_key(aggregation, function_name),
-                    aggregation
-                )
-            )
-
-        for key, conf in kwargs.items():
-            function_name = None
-            try:
-                # path / function tuple aggregate
-                path, func = conf
-            except TypeError:
-                # Django-like aggregate
-                path = lookup_to_path(conf.attr_name)
-                func = conf.aggregate
-                function_name = conf.name
-
-            aggregation = Aggregation(path, func)
-            aggregates.append(
-                (
-                    self._get_aggregate_key(aggregation, function_name, key),
-                    aggregation
-                )
-            )
-
-        query = self.query.clone(action='aggregate', aggregates=tuple(aggregates), flat=flat)
-        return self.manager.execute(query)
+        pass
 
     def distinct(self):
-        new_query = self.query.clone(distinct=True)
-        return self._clone(query=new_query)
+        pass
 
     def exists(self, from_backend=False):
-        if from_backend:
-            new_query = self.query.clone(action='exists')
-            return self.manager.execute(new_query)
-        return len(self) > 0
+        pass
 
     def locally(self):
         """
         Will execute the current queryset and pass it to the python backend
         so user can run query on the local dataset (instead of contacting the store)
         """
-
-        from .backends import python
-        from . import models
-
-        store = python.IterableStore(values=self)
-        return store.query(self.manager.model).all()
+        pass

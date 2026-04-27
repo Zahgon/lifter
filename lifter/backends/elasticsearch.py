@@ -8,66 +8,33 @@ class ES2Store(http.RESTStore):
     pluralize_model_name = False
 
     def get_out_attribute_names_converter(self):
-        return lambda v: v
+        pass
 
     def get_default_adapter(self, model):
-        return adapters.DictAdapter(recursive=True, key='_source')
+        pass
 
     def get_querystring_builder(self, query):
-        return ES2QueryStringBuilder()
+        pass
 
     def build_query_url(self, query, model):
-        base = super(ES2Store, self).build_query_url(query, model)
-
-        if query.action == 'select':
-            end = '_search'
-        if query.action == 'count':
-            end = '_count'
-
-        return base + '/' + end
+        pass
 
     def get_results(self, data, query):
-        if query.action == 'select':
-            return data['hits']['hits']
-        return data
+        pass
 
     def build_querystring(self, query):
-        qs = super(ES2Store, self).build_querystring(query)
-        if query.window:
-            qs['size'] = query.window.size
-            qs['from'] = query.window.start_as_int
-
-        subsets = [str(path) for path in query.hints.get('paths', [])]
-        if subsets:
-            qs['_source'] = ','.join(subsets)
-
-        return qs
+        pass
 
     def handle_count(self, query, model):
-        url = self.build_query_url(query, model)
-        request = self.build_request(url, query, model)
-        response = self.get_response(request)
-        parsed_response = self.parse_response(response)
-        return parsed_response['count']
+        pass
 
     def handle_values(self, query, model):
-        adapter = self.get_default_adapter(model)
-
-        results = self.handle_select(query.clone(action='select'), model)
-        return self._parse_results(
-            query=query,
-            results=results,
-            model=model,
-            adapter=adapter,
-        )
+        pass
 
 
 
 def _get_eq(lookup):
-    op = ''
-    if isinstance(lookup.reference_value, str):
-        return op, '"{0}"'.format(lookup.reference_value)
-    return op, lookup.reference_value
+    pass
 
 class ES2QueryStringBuilder(http.QueryStringBuilder):
     """
@@ -99,38 +66,13 @@ class ES2QueryStringBuilder(http.QueryStringBuilder):
     }
 
     def get_filters_as_dict(self, node):
-        d = {}
-
-        d['q'] = self.get_query_as_str(node)
-        return d
+        pass
 
     def get_orderings_as_dict(self, orderings):
-        o = []
-        for ordering in orderings:
-            direction = 'desc' if ordering.reverse else 'asc'
-            o.append('{0}:{1}'.format(ordering.path, direction))
-
-        return {
-            'sort': ','.join(o)
-        }
+        pass
 
     def cast_test(self, node):
-        return self.lookups_mapping[node.lookup.registry_name](node.lookup)
+        pass
 
     def get_query_as_str(self, node):
-        self.check_support(node)
-
-        try:
-            subqueries = []
-            for sq in node.subqueries:
-                subqueries.append(self.get_query_as_str(sq))
-            q = '(' + ' {0} '.format(node.operator).join(subqueries) + ')'
-
-        except AttributeError:
-            # Leaf query
-            test, value = self.cast_test(node)
-            q = '{0}:{1}{2}'.format(node.path, test, value)
-
-        if node.inverted:
-            q = 'NOT {0}'.format(q)
-        return q
+        pass

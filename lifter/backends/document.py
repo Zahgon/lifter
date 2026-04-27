@@ -17,24 +17,16 @@ class DocumentStore(DummyStore):
         super(DocumentStore, self).__init__(*args, **kwargs)
 
     def get_document(self):
-        return urlopen(self.url)
+        pass
 
     def parse_document(self, document, model, adapter):
-        if not self.parser:
-            return self.from_lines(document, model, adapter)
-        else:
-            return self.from_parser(document, model, adapter)
+        pass
 
     def from_parser(self, document, model, adapter):
-        parsed = self.parser.parse(document.read().decode(self.encoding))
-        return [adapter.parse(result, model) for result in parsed]
+        pass
 
     def from_lines(self, document, model, adapter):
-        return [
-            adapter.parse(line.decode(self.encoding), model)
-            for line in document
-        ]
+        pass
 
     def load(self, model, adapter):
-        with contextlib.closing(self.get_document()) as document:
-            return self.parse_document(document, model, adapter)
+        pass
